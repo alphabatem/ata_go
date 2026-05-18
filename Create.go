@@ -47,9 +47,6 @@ type Create struct {
 	//
 	// [5] = [] TokenProgram
 	// ··········· SPL token program ID
-	//
-	// [6] = [] SysVarRent
-	// ··········· SysVarRentPubkey
 	solana.AccountMetaSlice `bin:"-" borsh_skip:"true"`
 }
 
@@ -121,11 +118,6 @@ func (inst Create) Build() *Instruction {
 			IsSigner:   false,
 			IsWritable: false,
 		},
-		{
-			PublicKey:  solana.SysVarRentPubkey,
-			IsSigner:   false,
-			IsWritable: false,
-		},
 	}
 
 	inst.AccountMetaSlice = keys
@@ -178,14 +170,13 @@ func (inst *Create) EncodeToTree(parent treeout.Branches) {
 					instructionBranch.Child("Params[len=0]").ParentFunc(func(paramsBranch treeout.Branches) {})
 
 					// Accounts of the instruction:
-					instructionBranch.Child("Accounts[len=7").ParentFunc(func(accountsBranch treeout.Branches) {
+					instructionBranch.Child("Accounts[len=6").ParentFunc(func(accountsBranch treeout.Branches) {
 						accountsBranch.Child(format.Meta("                 payer", inst.AccountMetaSlice.Get(0)))
 						accountsBranch.Child(format.Meta("associatedTokenAddress", inst.AccountMetaSlice.Get(1)))
 						accountsBranch.Child(format.Meta("                wallet", inst.AccountMetaSlice.Get(2)))
 						accountsBranch.Child(format.Meta("             tokenMint", inst.AccountMetaSlice.Get(3)))
 						accountsBranch.Child(format.Meta("         systemProgram", inst.AccountMetaSlice.Get(4)))
 						accountsBranch.Child(format.Meta("          tokenProgram", inst.AccountMetaSlice.Get(5)))
-						accountsBranch.Child(format.Meta("            sysVarRent", inst.AccountMetaSlice.Get(6)))
 					})
 				})
 		})
